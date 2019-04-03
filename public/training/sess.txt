@@ -1,0 +1,1 @@
+Username|s:5:"Pawel";Role|s:5:"Admin";
