@@ -1,5 +1,8 @@
 {
     "require-dev": {
         "laravel/homestead": "^8.1"
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.0"
     }
 }

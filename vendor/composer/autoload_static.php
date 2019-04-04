@@ -21,6 +21,10 @@ class ComposerStaticInit604a47173bfbd47d380e53303b66db66
             'Symfony\\Component\\Process\\' => 26,
             'Symfony\\Component\\Console\\' => 26,
         ),
+        'P' => 
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
         'L' => 
         array (
             'Laravel\\Homestead\\' => 18,
@@ -51,6 +55,10 @@ class ComposerStaticInit604a47173bfbd47d380e53303b66db66
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Laravel\\Homestead\\' => 
         array (
