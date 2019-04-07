@@ -1,4 +1,5 @@
 <?php
+
   require_once('config.php');
   require_once('User.php');
   $firstNameOk = false;
@@ -27,6 +28,8 @@
     $user = new User();
     $user->populate($firstName, $lastName, $email, $password);
     $user->save();
+    $user->notifyOnEmail("Thank you for registration");
+    header('Location: index.php');
   } else {
     echo "Missing data!";
   }
