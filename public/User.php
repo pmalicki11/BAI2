@@ -1,44 +1,32 @@
 <?php
   //require_once('FileData.php');
   require_once('EmailSender.php');
-  require_once('DBWrapper.php');
 
   class User {
 
     protected $data;
-    private $DB;
-
-    public function __construct() {
-       $this->DB = DBWrapper::getInstance();
-    }
 
     public function populate($firstName, $lastName, $email, $password) {
       $this->data = ['firstName' => $firstName,
       'lastName' => $lastName,
       'email' => $email,
       'password' => sha1($password),
-      'is_active' => 0];
+      'isActive' => sha1(rand(0, 1000000000))];
     }
 
-    public function saveUser() {
-      $userData = [
-        'firstName' => $this->data['firstName'],
-        'lastName' => $this->data['lastName'],
-        'email' => $this->data['email'],
-        'password' => $this->data['password'],
-        'is_active' => $this->data['is_active']
-      ];
-
-      $this->DB->insert('users', $userData);
-    }
-
-    public function loadUserData($email) {
-      $this->file = md5($email);
-      $this->path = 'data';
-      if($this->load()) {
-        return true;
+    public function addUser() {
+      $values = array_values($this->data);
+      try {
+        $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
+        $query = $pdo->prepare("INSERT INTO users SET firstName=?, lastName=?, email=?, password=?, isActive=?");
+        if($query->execute(array_values($this->data))) {
+          $this->sendEmail('activationLink');
+        } else {
+          throw new Exception("User info not added");
+        }
+      } catch (Exception $e) {
+        exit("Something weird happened\n" . $e->getMessage());
       }
-      return false;
     }
 
     public function checkPassword($password) {
@@ -55,8 +43,20 @@
       return false;
     }
 
-    public function notifyOnEmail($notification) {
+    public function sendEmail($type) {
       $mail = new EmailSender(false);
-      $mail->sendEmail($this->data['email'], "Dear {$this->data['firstName']} {$this->data['lastName']}", $notification);
+      $emailAddress = $this->data['email'];
+      $subject = "Dear {$this->data['firstName']} {$this->data['lastName']}";
+      $content = "<h3>Hello {$this->data['firstName']}!</h3><br>";
+      switch($type) {
+        case 'activationLink':
+          $content .= "<p>Thanks for the registration!<br>
+          To activate your account please click link below<br>" .
+          '<a href="http://localhost/dev1/public/activateAccount.php?activationCode' .
+          $this->data['isActive'] . '">Activate</a></p>';
+          break;
+      }
+      $mail->sendEmail($emailAddress, $subject, $content);
+
     }
   }

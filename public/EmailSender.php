@@ -19,6 +19,8 @@
       $this->mail->SMTPSecure = 'tls';
       $this->mail->Port = 587;
       $this->mail->SMTPDebug = $debug;
+      $this->mail->CharSet = "utf-8";
+      $this->mail->IsHTML(true);
     }
 
     public function sendEmail($email, $subject, $message) {
