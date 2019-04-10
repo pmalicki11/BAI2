@@ -1,5 +1,5 @@
 <?php
-
+  session_start();
   require_once('config.php');
   require_once('User.php');
   $firstNameOk = false;
@@ -27,8 +27,13 @@
   if($firstNameOk && $lastNameOk && $emailOk && $passwordOk) {
     $user = new User();
     $user->populate($firstName, $lastName, $email, $password);
-    $user->addUser();
-    //header('Location: index.php');
+    if($user->addUser()) {
+      $_SESSION['information'] = 'Check your email to activate account.';
+      header('Location: index.php');
+    } else {
+      $_SESSION['information'] = 'User already exists!';
+      header('Location: registerForm.php');
+    }
   } else {
     echo "Missing data!";
   }

@@ -15,17 +15,42 @@
     }
 
     public function addUser() {
-      $values = array_values($this->data);
       try {
+        if($this->isExists($this->data['email'])) {
+          return false;
+        }
         $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
         $query = $pdo->prepare("INSERT INTO users SET firstName=?, lastName=?, email=?, password=?, isActive=?");
         if($query->execute(array_values($this->data))) {
           $this->sendEmail('activationLink');
+          return true;
         } else {
-          throw new Exception("User info not added");
+          throw new Exception("User info not added. Check query.");
         }
       } catch (Exception $e) {
-        exit("Something weird happened\n" . $e->getMessage());
+        exit($e->getMessage());
+      }
+    }
+
+    private function isExists($email) {
+      $user = $this->loadUser($email);
+      if(is_array($user) && !empty($user)) {
+        return true;
+      }
+      return false;
+    }
+
+    public function loadUser($email) {
+      try {
+        $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
+        $query = $pdo->prepare("SELECT firstName, lastName, email, password, isActive FROM users WHERE email=?");
+        if($query->execute([$email])) {
+          return $query->fetchAll();
+        } else {
+          return false;
+        }
+      } catch (Exception $e) {
+        exit($e->getMessage());
       }
     }
 
@@ -57,6 +82,5 @@
           break;
       }
       $mail->sendEmail($emailAddress, $subject, $content);
-
     }
   }

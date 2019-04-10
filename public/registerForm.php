@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  if(isset($_SESSION['information']) && $_SESSION['information'] != '') {
+    echo $_SESSION['information'];
+    $_SESSION['information'] = '';
+  }
+?>
+
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
