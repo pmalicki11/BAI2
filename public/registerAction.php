@@ -28,7 +28,6 @@
     $user = new User();
     $user->populate($firstName, $lastName, $email, $password);
     if($user->addUser()) {
-      $_SESSION['information'] = 'Check your email to activate account.';
       header('Location: index.php');
     } else {
       $_SESSION['information'] = 'User already exists!';

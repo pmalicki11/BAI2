@@ -16,7 +16,7 @@
 
     public function addUser() {
       try {
-        if($this->isExists($this->data['email'])) {
+        if($this->loadUser($this->data['email']) != false) {
           return false;
         }
         $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
@@ -32,20 +32,21 @@
       }
     }
 
-    private function isExists($email) {
-      $user = $this->loadUser($email);
-      if(is_array($user) && !empty($user)) {
-        return true;
-      }
-      return false;
-    }
-
     public function loadUser($email) {
       try {
         $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
         $query = $pdo->prepare("SELECT firstName, lastName, email, password, isActive FROM users WHERE email=?");
         if($query->execute([$email])) {
-          return $query->fetchAll();
+          $loadedData = $query->fetchAll();
+          if(empty($loadedData)) {
+            return false;
+          }
+          $this->data['firstName'] = $loadedData[0]['firstName'];
+          $this->data['lastName'] = $loadedData[0]['lastName'];
+          $this->data['email'] = $loadedData[0]['email'];
+          $this->data['password'] = $loadedData[0]['password'];
+          $this->data['isActive'] = $loadedData[0]['isActive'];
+          return true;
         } else {
           return false;
         }
@@ -55,10 +56,38 @@
     }
 
     public function checkPassword($password) {
-      if($this->data && $this->data['password'] == $password) {
+      if($this->data && $this->data['password'] == sha1($password)) {
         return true;
       }
       return false;
+    }
+
+    public function isActive() {
+      if($this->data['isActive'] == 0) {
+        return true;
+      }
+      return false;
+    }
+
+    public function activateUser() {
+      if(!$this->isActive) {
+        $this->data['isActive'] = 0;
+        try {
+          if($this->loadUser($this->data['email']) != false) {
+            return false;
+          }
+          $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
+          $query = $pdo->prepare("UPDATE users SET isActive=?");
+          if($query->execute([0])) {
+            $this->sendEmail('activationComplete');
+            return true;
+          } else {
+            throw new Exception("User info not added. Check query.");
+          }
+        } catch (Exception $e) {
+          exit($e->getMessage());
+        }
+      }
     }
 
     public function showFullName() {

@@ -19,8 +19,8 @@
 
   if($emailPresent && $passwordPresent) {
     $user = new User();
-    if($user->loadUserData($email)) {
-      if ($user->checkPassword($password)) {
+    if($user->loadUser($email)) {
+      if($user->checkPassword($password) && $user->isActive) {
         $_SESSION['auth'] = 1;
         $_SESSION['user'] = $user;
         header('Location: index.php');
