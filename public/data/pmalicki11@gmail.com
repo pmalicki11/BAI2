@@ -1,0 +1,1 @@
+a:4:{s:9:"firstName";s:6:"Paweł";s:8:"lastName";s:7:"Malicki";s:5:"email";s:20:"pmalicki11@gmail.com";s:8:"password";s:40:"5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8";}

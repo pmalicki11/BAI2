@@ -1,15 +1,35 @@
 <?php
-  require_once('FileData.php');
+  //require_once('FileData.php');
   require_once('EmailSender.php');
-  class User extends FileData {
+  require_once('DBWrapper.php');
+
+  class User {
+
+    protected $data;
+    private $DB;
+
+    public function __construct() {
+       $this->DB = DBWrapper::getInstance();
+    }
 
     public function populate($firstName, $lastName, $email, $password) {
       $this->data = ['firstName' => $firstName,
       'lastName' => $lastName,
       'email' => $email,
-      'password' => $password];
-      $this->file = md5($email);
-      $this->path = 'data';
+      'password' => sha1($password),
+      'is_active' => 0];
+    }
+
+    public function saveUser() {
+      $userData = [
+        'firstName' => $this->data['firstName'],
+        'lastName' => $this->data['lastName'],
+        'email' => $this->data['email'],
+        'password' => $this->data['password'],
+        'is_active' => $this->data['is_active']
+      ];
+
+      $this->DB->insert('users', $userData);
     }
 
     public function loadUserData($email) {

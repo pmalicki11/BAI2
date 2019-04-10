@@ -27,9 +27,9 @@
   if($firstNameOk && $lastNameOk && $emailOk && $passwordOk) {
     $user = new User();
     $user->populate($firstName, $lastName, $email, $password);
-    $user->save();
-    $user->notifyOnEmail("Thank you for registration");
-    header('Location: index.php');
+    $user->saveUser();
+    //$user->notifyOnEmail("Thank you for registration");
+    //header('Location: index.php');
   } else {
     echo "Missing data!";
   }
