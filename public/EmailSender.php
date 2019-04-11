@@ -32,8 +32,6 @@
       if(!$this->mail->send()) {
         echo 'Email has not been sent.';
         echo 'Mailer Error: ' . $this->mail->ErrorInfo;
-      } else {
-        echo 'Email sent!';
       }
     }
   }

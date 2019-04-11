@@ -20,7 +20,7 @@
   if($emailPresent && $passwordPresent) {
     $user = new User();
     if($user->loadUser($email)) {
-      if($user->checkPassword($password) && $user->isActive) {
+      if($user->checkPassword($password) && $user->activationCode() == 1) {
         $_SESSION['auth'] = 1;
         $_SESSION['user'] = $user;
         header('Location: index.php');

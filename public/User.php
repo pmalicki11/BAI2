@@ -62,24 +62,20 @@
       return false;
     }
 
-    public function isActive() {
-      if($this->data['isActive'] == 0) {
-        return true;
-      }
-      return false;
+    public function activationCode() {
+      return $this->data['isActive'];
     }
 
     public function activateUser() {
-      if(!$this->isActive) {
-        $this->data['isActive'] = 0;
+      if($this->activationCode() != 1) {
         try {
-          if($this->loadUser($this->data['email']) != false) {
+          if(empty($this->data)) {
             return false;
           }
           $pdo = new PDO('mysql:host=localhost;dbname=bai;charset=utf8', 'root', 'root');
           $query = $pdo->prepare("UPDATE users SET isActive=?");
-          if($query->execute([0])) {
-            $this->sendEmail('activationComplete');
+          if($query->execute([1])) {
+            $this->sendEmail('activationComplete'); //add in switch
             return true;
           } else {
             throw new Exception("User info not added. Check query.");
@@ -106,9 +102,12 @@
         case 'activationLink':
           $content .= "<p>Thanks for the registration!<br>
           To activate your account please click link below<br>" .
-          '<a href="http://localhost/dev1/public/activateAccount.php?activationCode' .
+          '<a href="http://localhost/dev1/public/activateForm.php?activationCode=' .
           $this->data['isActive'] . '">Activate</a></p>';
           break;
+        case 'activationComplete':
+          $content .= '<p>Your account is now active!<br>
+          You can log in <a href="http://localhost/dev1/public/loginForm.php">here</a>.';
       }
       $mail->sendEmail($emailAddress, $subject, $content);
     }
